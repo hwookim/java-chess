@@ -5,6 +5,8 @@ import static spark.Spark.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jetty.http.HttpStatus;
+
 import chess.domain.position.MoveInfo;
 import chess.dto.BoardDTO;
 import chess.dto.StatusDTO;
@@ -68,7 +70,7 @@ public class WebChessController implements ChessController {
 	}
 
 	private void handleException(IllegalArgumentException exception, Request request, Response response) {
-		response.status(400);
+		response.status(HttpStatus.BAD_REQUEST_400);
 		response.body(exception.getMessage());
 	}
 
