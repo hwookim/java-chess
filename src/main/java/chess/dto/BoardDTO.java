@@ -29,6 +29,6 @@ public class BoardDTO {
 			.collect(toMap(
 				entry -> entry.getKey().getName(),
 				entry -> entry.getValue().getSymbol()
-				));
+			));
 	}
 }
