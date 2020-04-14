@@ -3,9 +3,6 @@ package chess.dao;
 import static chess.domain.position.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +34,14 @@ public class BoardDAOTest {
 	}
 
 	@Test
+	void initialize() {
+		assertThat(boardDAO.findBoardBy("1").isEmpty()).isTrue();
+
+		boardDAO.initialize("1", BoardFactory.toList());
+		assertThat(boardDAO.findBoardBy("1").isEmpty()).isFalse();
+	}
+
+	@Test
 	void addPiece() {
 		Piece piece = new King(A3, Team.WHITE);
 		boardDAO.addPiece("1", piece);
@@ -46,11 +51,15 @@ public class BoardDAOTest {
 	}
 
 	@Test
+	void findPiece() {
+		boardDAO.initialize("1", BoardFactory.toList());
+
+		assertThat(boardDAO.findPieceBy("1", A1).getName()).isEqualTo("r");
+	}
+
+	@Test
 	void findBoard() {
-		List<Piece> initial = new ArrayList<>(BoardFactory.toList());
-		for (Piece piece : initial) {
-			boardDAO.addPiece("1", piece);
-		}
+		boardDAO.initialize("1", BoardFactory.toList());
 
 		assertThat(boardDAO.findBoardBy("1")).isInstanceOf(Board.class);
 		assertThat(boardDAO.findBoardBy("1").isEmpty()).isFalse();
