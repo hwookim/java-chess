@@ -17,6 +17,7 @@ import chess.domain.piece.Team;
 
 public class BoardDAOTest {
 	private BoardDAO boardDAO;
+	private String gameId = "test";
 
 	@BeforeEach
 	void setUp() {
@@ -25,7 +26,7 @@ public class BoardDAOTest {
 
 	@AfterEach
 	void tearDown() {
-		boardDAO.truncate();
+		boardDAO.delete(gameId);
 	}
 
 	@Test
@@ -35,44 +36,44 @@ public class BoardDAOTest {
 
 	@Test
 	void initialize() {
-		assertThat(boardDAO.findBoardBy("1").isEmpty()).isTrue();
+		assertThat(boardDAO.findBoardBy(gameId).isEmpty()).isTrue();
 
-		boardDAO.initialize("1", BoardFactory.toList());
-		assertThat(boardDAO.findBoardBy("1").isEmpty()).isFalse();
+		boardDAO.initialize(gameId, BoardFactory.toList());
+		assertThat(boardDAO.findBoardBy(gameId).isEmpty()).isFalse();
 	}
 
 	@Test
 	void addPiece() {
 		Piece piece = new King(A3, Team.WHITE);
-		boardDAO.addPiece("1", piece);
+		boardDAO.addPiece(gameId, piece);
 
-		assertThat(boardDAO.findPieceBy("1", A3).getSymbol()).isEqualTo(piece.getSymbol());
+		assertThat(boardDAO.findPieceBy(gameId, A3).getSymbol()).isEqualTo(piece.getSymbol());
 
 	}
 
 	@Test
 	void findPiece() {
-		boardDAO.initialize("1", BoardFactory.toList());
+		boardDAO.initialize(gameId, BoardFactory.toList());
 
-		assertThat(boardDAO.findPieceBy("1", A1).getName()).isEqualTo("r");
+		assertThat(boardDAO.findPieceBy(gameId, A1).getName()).isEqualTo("r");
 	}
 
 	@Test
 	void findBoard() {
-		boardDAO.initialize("1", BoardFactory.toList());
+		boardDAO.initialize(gameId, BoardFactory.toList());
 
-		assertThat(boardDAO.findBoardBy("1")).isInstanceOf(Board.class);
-		assertThat(boardDAO.findBoardBy("1").isEmpty()).isFalse();
+		assertThat(boardDAO.findBoardBy(gameId)).isInstanceOf(Board.class);
+		assertThat(boardDAO.findBoardBy(gameId).isEmpty()).isFalse();
 	}
 
 	@Test
 	void update() {
-		boardDAO.addPiece("1", new Pawn(A2, Team.WHITE));
-		boardDAO.addPiece("1", new Empty(A4, Team.NONE));
+		boardDAO.addPiece(gameId, new Pawn(A2, Team.WHITE));
+		boardDAO.addPiece(gameId, new Empty(A4, Team.NONE));
 
-		boardDAO.update("1", A2, A4);
+		boardDAO.update(gameId, A2, A4);
 
-		assertThat(boardDAO.findPieceBy("1", A2)).isInstanceOf(Empty.class);
-		assertThat(boardDAO.findPieceBy("1", A4)).isInstanceOf(Pawn.class);
+		assertThat(boardDAO.findPieceBy(gameId, A2)).isInstanceOf(Empty.class);
+		assertThat(boardDAO.findPieceBy(gameId, A4)).isInstanceOf(Pawn.class);
 	}
 }

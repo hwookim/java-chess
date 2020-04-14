@@ -10,6 +10,7 @@ import chess.domain.piece.Team;
 
 public class TurnInfoDAOTest {
 	private TurnInfoDAO turnInfoDAO;
+	private String gameId = "test";
 
 	@BeforeEach
 	void setUp() {
@@ -18,7 +19,7 @@ public class TurnInfoDAOTest {
 
 	@AfterEach
 	void tearDown() {
-		turnInfoDAO.truncate();
+		turnInfoDAO.delete(gameId);
 	}
 
 	@Test
@@ -28,16 +29,16 @@ public class TurnInfoDAOTest {
 
 	@Test
 	void initialize() {
-		turnInfoDAO.initialize("1", Team.WHITE);
+		turnInfoDAO.initialize(gameId, Team.WHITE);
 
-		assertThat(turnInfoDAO.findCurrent("1")).isEqualTo(Team.WHITE);
+		assertThat(turnInfoDAO.findCurrent(gameId)).isEqualTo(Team.WHITE);
 	}
 
 	@Test
 	void updateNext() {
-		turnInfoDAO.initialize("1", Team.WHITE);
-		turnInfoDAO.updateNext("1");
+		turnInfoDAO.initialize(gameId, Team.WHITE);
+		turnInfoDAO.updateNext(gameId);
 
-		assertThat(turnInfoDAO.findCurrent("1")).isEqualTo(Team.BLACK);
+		assertThat(turnInfoDAO.findCurrent(gameId)).isEqualTo(Team.BLACK);
 	}
 }
