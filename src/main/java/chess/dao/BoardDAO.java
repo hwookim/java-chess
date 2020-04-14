@@ -18,9 +18,11 @@ import chess.domain.position.Position;
 public class BoardDAO {
 	public void initialize(String gameId, List<Piece> board) {
 		String query = "INSERT INTO board VALUES (?, ?, ?)";
-		try {
+
+		try (
 			Connection con = getConnection();
-			PreparedStatement pstmt = con.prepareStatement(query);
+			PreparedStatement pstmt = con.prepareStatement(query)
+		) {
 			for (Piece piece : board) {
 				pstmt.setString(1, gameId);
 				pstmt.setString(2, piece.getPosition().getName());
@@ -29,8 +31,6 @@ public class BoardDAO {
 				pstmt.clearParameters();
 			}
 			pstmt.executeBatch();
-			pstmt.close();
-			closeConnection(con);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -38,15 +38,14 @@ public class BoardDAO {
 
 	public void addPiece(String gameId, Piece piece) {
 		String query = "INSERT INTO board VALUES (?, ?, ?)";
-		try {
+		try (
 			Connection con = getConnection();
-			PreparedStatement pstmt = con.prepareStatement(query);
+			PreparedStatement pstmt = con.prepareStatement(query)
+		) {
 			pstmt.setString(1, gameId);
 			pstmt.setString(2, piece.getPosition().getName());
 			pstmt.setString(3, piece.getSymbol());
 			pstmt.executeUpdate();
-			pstmt.close();
-			closeConnection(con);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -54,18 +53,16 @@ public class BoardDAO {
 
 	public Piece findPieceBy(String gameId, Position position) {
 		String query = "SELECT * FROM board WHERE game_id = ? AND position = ?";
-		try {
+		try (
 			Connection con = getConnection();
-			PreparedStatement pstmt = con.prepareStatement(query);
+			PreparedStatement pstmt = con.prepareStatement(query)
+		) {
 			pstmt.setString(1, gameId);
 			pstmt.setString(2, position.getName());
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
-			Piece piece = PieceFactory.of(rs.getString("symbol")).create(position);
-			pstmt.close();
-			closeConnection(con);
 
-			return piece;
+			return PieceFactory.of(rs.getString("symbol")).create(position);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -74,9 +71,10 @@ public class BoardDAO {
 	public Board findBoardBy(String gameId) {
 		List<Piece> board = new ArrayList<>();
 		String query = "SELECT * FROM board WHERE game_id = ?";
-		try {
+		try (
 			Connection con = getConnection();
-			PreparedStatement pstmt = con.prepareStatement(query);
+			PreparedStatement pstmt = con.prepareStatement(query)
+		) {
 			pstmt.setString(1, gameId);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
@@ -84,8 +82,6 @@ public class BoardDAO {
 				Position position = Position.of(rs.getString("position"));
 				board.add(PieceFactory.of(symbol).create(position));
 			}
-			pstmt.close();
-			closeConnection(con);
 
 			return Board.of(board);
 		} catch (SQLException e) {
@@ -97,9 +93,10 @@ public class BoardDAO {
 		String query = "UPDATE board SET symbol = ? WHERE game_id = ? AND position = ?";
 		Piece source = findPieceBy(gameId, from);
 		Piece target = findPieceBy(gameId, to);
-		try {
+		try (
 			Connection con = getConnection();
-			PreparedStatement pstmt = con.prepareStatement(query);
+			PreparedStatement pstmt = con.prepareStatement(query)
+		) {
 			pstmt.setString(1, source.getSymbol());
 			pstmt.setString(2, gameId);
 			pstmt.setString(3, target.getPosition().getName());
@@ -111,9 +108,6 @@ public class BoardDAO {
 			pstmt.setString(3, source.getPosition().getName());
 			pstmt.addBatch();
 			pstmt.executeBatch();
-
-			pstmt.close();
-			closeConnection(con);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -121,12 +115,11 @@ public class BoardDAO {
 
 	public void truncate() {
 		String query = "TRUNCATE board";
-		try {
+		try (
 			Connection con = getConnection();
-			PreparedStatement pstmt = con.prepareStatement(query);
+			PreparedStatement pstmt = con.prepareStatement(query)
+		) {
 			pstmt.executeUpdate();
-			pstmt.close();
-			closeConnection(con);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
