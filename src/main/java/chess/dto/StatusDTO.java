@@ -4,7 +4,9 @@ import java.util.Map;
 
 import chess.domain.Status;
 import chess.domain.piece.Team;
+import lombok.Getter;
 
+@Getter
 public class StatusDTO {
 	private final double whiteScore;
 	private final double blackScore;
@@ -22,18 +24,6 @@ public class StatusDTO {
 		String winner = status.getWinner().getName();
 
 		return new StatusDTO(whiteScore, blackScore, winner);
-	}
-
-	public double getWhiteScore() {
-		return whiteScore;
-	}
-
-	public double getBlackScore() {
-		return blackScore;
-	}
-
-	public String getWinner() {
-		return winner;
 	}
 
 	public Map<String, String> getStatus() {
