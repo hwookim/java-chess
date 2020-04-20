@@ -8,56 +8,57 @@ import chess.view.InputView;
 import chess.view.OutputView;
 
 public class ConsoleChessController implements ChessController {
-	private static final String CONSOLE_ID = "console";
 
-	private final ChessService service;
+    private static final String CONSOLE_ID = "console";
 
-	public ConsoleChessController(ChessService chessService) {
-		this.service = chessService;
-	}
+    private final ChessService service;
 
-	@Override
-	public void start() {
-		OutputView.printInitialMessage();
-		Command command = Command.of(InputView.inputStartOrEnd());
+    public ConsoleChessController(ChessService chessService) {
+        this.service = chessService;
+    }
 
-		if (command.isNotFirst()) {
-			throw new IllegalArgumentException("잘못된 명령어 입력입니다.");
-		}
-		if (command.isEnd()) {
-			exit();
-		}
+    @Override
+    public void start() {
+        OutputView.printInitialMessage();
+        Command command = Command.of(InputView.inputStartOrEnd());
 
-		service.initialize(CONSOLE_ID);
-		OutputView.printBoard(BoardDTO.of(service.getBoard(CONSOLE_ID)));
-	}
+        if (command.isNotFirst()) {
+            throw new IllegalArgumentException("잘못된 명령어 입력입니다.");
+        }
+        if (command.isEnd()) {
+            exit();
+        }
 
-	private void exit() {
-		System.exit(0);
-	}
+        service.initialize(CONSOLE_ID);
+        OutputView.printBoard(BoardDTO.of(service.getBoard(CONSOLE_ID)));
+    }
 
-	@Override
-	public void playTurn() {
-		String input = InputView.inputMoveOrStatus();
-		Command command = Command.of(input);
+    private void exit() {
+        System.exit(0);
+    }
 
-		if (command.isNotPlay()) {
-			throw new IllegalArgumentException("잘못된 명령어 입력입니다.");
-		}
-		if (command.isStatus()) {
-			status();
-		}
+    @Override
+    public void playTurn() {
+        String input = InputView.inputMoveOrStatus();
+        Command command = Command.of(input);
 
-		move(input);
-	}
+        if (command.isNotPlay()) {
+            throw new IllegalArgumentException("잘못된 명령어 입력입니다.");
+        }
+        if (command.isStatus()) {
+            status();
+        }
 
-	private void move(String input) {
-		service.move(CONSOLE_ID, MoveInfo.of(input));
-		OutputView.printBoard(BoardDTO.of(service.getBoard(CONSOLE_ID)));
-	}
+        move(input);
+    }
 
-	private void status() {
-		OutputView.printScore(StatusDTO.of(service.getResult(CONSOLE_ID)));
-		exit();
-	}
+    private void move(String input) {
+        service.move(CONSOLE_ID, MoveInfo.of(input));
+        OutputView.printBoard(BoardDTO.of(service.getBoard(CONSOLE_ID)));
+    }
+
+    private void status() {
+        OutputView.printScore(StatusDTO.of(service.getResult(CONSOLE_ID)));
+        exit();
+    }
 }

@@ -1,93 +1,96 @@
 package chess.domain.board;
 
-import static java.util.stream.Collectors.*;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import chess.domain.piece.Empty;
 import chess.domain.piece.Piece;
 import chess.domain.piece.Team;
 import chess.domain.position.Path;
 import chess.domain.position.Position;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public class Board {
-	private static final int TEAM_COUNT = 2;
 
-	private final Map<Position, Piece> board;
+    private static final int TEAM_COUNT = 2;
 
-	private Board(Map<Position, Piece> board) {
-		this.board = board;
-	}
+    private final Map<Position, Piece> board;
 
-	public static Board of(Map<Position, Piece> board) {
-		fillEmpty(board);
-		return new Board(board);
-	}
+    private Board(Map<Position, Piece> board) {
+        this.board = board;
+    }
 
-	public static Board of(List<Piece> pieces) {
-		return of(pieces.stream()
-			.collect(toMap(
-				Piece::getPosition,
-				Function.identity())
-			));
-	}
+    public static Board of(Map<Position, Piece> board) {
+        fillEmpty(board);
+        return new Board(board);
+    }
 
-	private static void fillEmpty(Map<Position, Piece> board) {
-		Position.getPositions()
-			.stream()
-			.filter(position -> board.get(position) == null)
-			.forEach(position -> board.put(position, new Empty(position)));
-	}
+    public static Board of(List<Piece> pieces) {
+        return of(pieces.stream()
+            .collect(toMap(
+                Piece::getPosition,
+                Function.identity())
+            ));
+    }
 
-	public void verifyMove(Position from, Position to, Team current) {
-		if (isEnd()) {
-			throw new IllegalArgumentException("게임 끝");
-		}
+    private static void fillEmpty(Map<Position, Piece> board) {
+        Position.getPositions()
+            .stream()
+            .filter(position -> board.get(position) == null)
+            .forEach(position -> board.put(position, new Empty(position)));
+    }
 
-		Piece piece = board.get(from);
-		Piece target = board.get(to);
+    public void verifyMove(Position from, Position to, Team current) {
+        if (isEnd()) {
+            throw new IllegalArgumentException("게임 끝");
+        }
 
-		if (piece.isNotSameTeam(current)) {
-			throw new IllegalArgumentException("아군 기물의 위치가 아닙니다.");
-		}
-		if (hasPieceIn(Path.of(from, to)) || piece.canNotMoveTo(target)) {
-			throw new IllegalArgumentException("이동할 수 없는 경로입니다.");
-		}
-	}
+        Piece piece = board.get(from);
+        Piece target = board.get(to);
 
-	public boolean isEmpty() {
-		return Position.getPositions()
-			.stream()
-			.noneMatch(position -> board.get(position).isObstacle());
-	}
+        if (piece.isNotSameTeam(current)) {
+            throw new IllegalArgumentException("아군 기물의 위치가 아닙니다.");
+        }
+        if (hasPieceIn(Path.of(from, to)) || piece.canNotMoveTo(target)) {
+            throw new IllegalArgumentException("이동할 수 없는 경로입니다.");
+        }
+    }
 
-	private boolean hasPieceIn(Path path) {
-		return path.toList()
-			.stream()
-			.anyMatch(key -> board.get(key).isObstacle());
-	}
+    public boolean isEmpty() {
+        return Position.getPositions()
+            .stream()
+            .noneMatch(position -> board.get(position).isObstacle());
+    }
 
-	private boolean isEnd() {
-		return board.values()
-			.stream()
-			.filter(Piece::hasToAlive)
-			.count() != TEAM_COUNT;
-	}
+    private boolean hasPieceIn(Path path) {
+        return path.toList()
+            .stream()
+            .anyMatch(key -> board.get(key).isObstacle());
+    }
 
-	public Collection<List<Piece>> getColumnGroupOf(Team team) {
-		return board.entrySet()
-			.stream()
-			.filter(entry -> entry.getValue().isSameTeam(team))
-			.collect(groupingBy(
-				entry -> entry.getKey().getColumn(),
-				mapping(Map.Entry::getValue, toList())))
-			.values();
-	}
+    private boolean isEnd() {
+        return board.values()
+            .stream()
+            .filter(Piece::hasToAlive)
+            .count() != TEAM_COUNT;
+    }
 
-	public Map<Position, Piece> getBoard() {
-		return board;
-	}
+    public Collection<List<Piece>> getColumnGroupOf(Team team) {
+        return board.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().isSameTeam(team))
+            .collect(groupingBy(
+                entry -> entry.getKey().getColumn(),
+                mapping(Map.Entry::getValue, toList())))
+            .values();
+    }
+
+    public Map<Position, Piece> getBoard() {
+        return board;
+    }
 }

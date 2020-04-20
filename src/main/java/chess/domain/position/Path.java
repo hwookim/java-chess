@@ -5,25 +5,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class Path {
-	private final List<Position> path;
 
-	private Path(List<Position> path) {
-		this.path = path;
-	}
+    private final List<Position> path;
 
-	public static Path of(Position start, Position end) {
-		List<Position> path = new ArrayList<>();
+    private Path(List<Position> path) {
+        this.path = path;
+    }
 
-		Position current = start;
-		for (int i = 1; i < Distance.of(start, end).getDistance(); i++) {
-			current = Direction.of(current, end).move(current);
-			path.add(current);
-		}
+    public static Path of(Position start, Position end) {
+        List<Position> path = new ArrayList<>();
 
-		return new Path(path);
-	}
+        Position current = start;
+        for (int i = 1; i < Distance.of(start, end).getDistance(); i++) {
+            current = Direction.of(current, end).move(current);
+            path.add(current);
+        }
 
-	public List<Position> toList() {
-		return Collections.unmodifiableList(path);
-	}
+        return new Path(path);
+    }
+
+    public List<Position> toList() {
+        return Collections.unmodifiableList(path);
+    }
 }

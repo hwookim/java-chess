@@ -4,36 +4,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MoveInfo {
-	private static final String DELIMITER = " ";
-	private static final int FROM = 0;
-	private static final int TO = 1;
 
-	private final Position from;
-	private final Position to;
+    private static final String DELIMITER = " ";
+    private static final int FROM = 0;
+    private static final int TO = 1;
 
-	private MoveInfo(Position from, Position to) {
-		this.from = from;
-		this.to = to;
-	}
+    private final Position from;
+    private final Position to;
 
-	public static MoveInfo of(String moveInfo) {
-		List<Position> infos = List.of(moveInfo.split(DELIMITER))
-			.stream()
-			.filter(info -> !info.equals("move"))
-			.map(Position::of)
-			.collect(Collectors.toList());
-		return new MoveInfo(infos.get(FROM), infos.get(TO));
-	}
+    private MoveInfo(Position from, Position to) {
+        this.from = from;
+        this.to = to;
+    }
 
-	public static MoveInfo of(String from, String to) {
-		return new MoveInfo(Position.of(from), Position.of(to));
-	}
+    public static MoveInfo of(String moveInfo) {
+        List<Position> infos = List.of(moveInfo.split(DELIMITER))
+            .stream()
+            .filter(info -> !info.equals("move"))
+            .map(Position::of)
+            .collect(Collectors.toList());
+        return new MoveInfo(infos.get(FROM), infos.get(TO));
+    }
 
-	public Position getFrom() {
-		return from;
-	}
+    public static MoveInfo of(String from, String to) {
+        return new MoveInfo(Position.of(from), Position.of(to));
+    }
 
-	public Position getTo() {
-		return to;
-	}
+    public Position getFrom() {
+        return from;
+    }
+
+    public Position getTo() {
+        return to;
+    }
 }

@@ -14,7 +14,6 @@ function alertMessage(response) {
     alert(response.responseText);
 }
 
-
 function renderPiece(response) {
     const fromTo = response.split(" ");
     const sourceNode = document.getElementById(fromTo[0]);
@@ -38,7 +37,6 @@ function boxClickHandler() {
         }
     };
 }
-
 
 function getMoveInfo() {
     $(`.box`).on(`click`, boxClickHandler())

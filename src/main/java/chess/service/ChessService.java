@@ -10,37 +10,38 @@ import chess.domain.position.MoveInfo;
 import chess.domain.position.Position;
 
 public class ChessService {
-	private final BoardDAO boardDAO;
-	private final TurnInfoDAO turnInfoDAO;
 
-	public ChessService(BoardDAO boardDAO, TurnInfoDAO turnInfoDAO) {
-		this.boardDAO = boardDAO;
-		this.turnInfoDAO = turnInfoDAO;
-	}
+    private final BoardDAO boardDAO;
+    private final TurnInfoDAO turnInfoDAO;
 
-	public void initialize(String gameId) {
-		if (boardDAO.findBoardBy(gameId).isEmpty()) {
-			boardDAO.initialize(gameId, BoardFactory.toList());
-			turnInfoDAO.initialize(gameId, Team.WHITE);
-		}
-	}
+    public ChessService(BoardDAO boardDAO, TurnInfoDAO turnInfoDAO) {
+        this.boardDAO = boardDAO;
+        this.turnInfoDAO = turnInfoDAO;
+    }
 
-	public void move(String gameId, MoveInfo moveInfo) {
-		Board board = boardDAO.findBoardBy(gameId);
-		Position from = moveInfo.getFrom();
-		Position to = moveInfo.getTo();
+    public void initialize(String gameId) {
+        if (boardDAO.findBoardBy(gameId).isEmpty()) {
+            boardDAO.initialize(gameId, BoardFactory.toList());
+            turnInfoDAO.initialize(gameId, Team.WHITE);
+        }
+    }
 
-		board.verifyMove(from, to, turnInfoDAO.findCurrent(gameId));
+    public void move(String gameId, MoveInfo moveInfo) {
+        Board board = boardDAO.findBoardBy(gameId);
+        Position from = moveInfo.getFrom();
+        Position to = moveInfo.getTo();
 
-		boardDAO.update(gameId, from, to);
-		turnInfoDAO.updateNext(gameId);
-	}
+        board.verifyMove(from, to, turnInfoDAO.findCurrent(gameId));
 
-	public Board getBoard(String gameId) {
-		return boardDAO.findBoardBy(gameId);
-	}
+        boardDAO.update(gameId, from, to);
+        turnInfoDAO.updateNext(gameId);
+    }
 
-	public Status getResult(String gameId) {
-		return Status.of(boardDAO.findBoardBy(gameId));
-	}
+    public Board getBoard(String gameId) {
+        return boardDAO.findBoardBy(gameId);
+    }
+
+    public Status getResult(String gameId) {
+        return Status.of(boardDAO.findBoardBy(gameId));
+    }
 }

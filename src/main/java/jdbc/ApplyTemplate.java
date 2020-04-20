@@ -1,14 +1,14 @@
 package jdbc;
 
-import lombok.Cleanup;
-
-import static jdbc.DBConnector.*;
+import static jdbc.DBConnector.getConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import lombok.Cleanup;
 
 public abstract class ApplyTemplate {
+
     private final String query;
 
     protected ApplyTemplate(String query) {
