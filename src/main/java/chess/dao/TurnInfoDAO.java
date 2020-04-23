@@ -39,12 +39,12 @@ public class TurnInfoDAO {
         return (Team) query.getResult();
     }
 
-    public void updateNext(String gameId) {
+    public void updateNext(String gameId, Team team) {
         ApplyTemplate query = new ApplyTemplate(
             "UPDATE turn_info SET current_team = ? WHERE game_id = ?") {
             @Override
             protected void setParameters(PreparedStatement pstmt) throws SQLException {
-                pstmt.setString(1, findCurrent(gameId).next().getName());
+                pstmt.setString(1, team.getName());
                 pstmt.setString(2, gameId);
             }
         };

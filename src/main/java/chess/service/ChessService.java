@@ -30,11 +30,12 @@ public class ChessService {
         Board board = boardDAO.findBoardBy(gameId);
         Position from = moveInfo.getFrom();
         Position to = moveInfo.getTo();
+        Team current = turnInfoDAO.findCurrent(gameId);
 
-        board.verifyMove(from, to, turnInfoDAO.findCurrent(gameId));
+        board.verifyMove(from, to, current);
 
         boardDAO.update(gameId, from, to);
-        turnInfoDAO.updateNext(gameId);
+        turnInfoDAO.updateNext(gameId, current.next());
     }
 
     public Board getBoard(String gameId) {
