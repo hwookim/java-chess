@@ -9,7 +9,7 @@ import chess.dto.BoardDTO;
 import chess.dto.StatusDTO;
 import chess.service.ChessService;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,11 +54,10 @@ public class WebChessController implements ChessController {
     }
 
     private String updateBoard(Request request, Response response) {
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(request.body());
+        JsonObject body = JsonParser.parseString(request.body()).getAsJsonObject();
 
-        String from = element.getAsJsonObject().get("from").getAsString();
-        String to = element.getAsJsonObject().get("to").getAsString();
+        String from = body.get("from").getAsString();
+        String to = body.get("to").getAsString();
         String gameId = request.session().attribute("game_id");
 
         service.move(gameId, MoveInfo.of(from, to));
